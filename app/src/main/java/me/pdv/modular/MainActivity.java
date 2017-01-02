@@ -12,8 +12,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Observable.just(1, 2, 3)
-                .filter(x -> x > 2)
-                .subscribe(System.out::println);
+        new Card(new TitleProvider().getTitle(
+                ((ModularApplication) getApplication())
+                        .getUserStateHolder()
+                        .getTeamsProvider()
+                        .getTeams()
+        ), Observable.just("hello"));
+
     }
 }
