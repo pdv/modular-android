@@ -16,21 +16,6 @@ public class O<T> extends Observable<T> {
         super(onSubscribe);
     }
 
-    public static void newInstance() {
-        return
-    }
-
-    public Parallel split(int channels) {
-        ConnectableObservable<T> connectableObservable = this.publish();
-        Parallel parallel = new Parallel();
-        for (int i = 0; i < channels; i++) {
-            connectableObservable.subscribe()
-            Observable<T> obs = Subscriber
-            O<T> channel =
-            parallel.add()
-        }
-
-    }
 
     public class Parallel extends ArrayList<O> {
 

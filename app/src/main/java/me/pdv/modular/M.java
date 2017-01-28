@@ -12,7 +12,7 @@ public class M {
     interface Map<K, V> extends Func1<K, V> {}
 
     interface Source<T> {
-        O<T> get();
+        Observable<T> get();
     }
 
     interface Sink<T> {
