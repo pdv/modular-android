@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Adapter;
 import android.widget.TextView;
 
 import com.jakewharton.rxbinding.widget.RxAdapterView;
@@ -12,6 +13,9 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 import java.util.List;
 
 import rx.Observable;
+import rx.Subscription;
+import rx.functions.Func0;
+import rx.functions.Func1;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,18 +29,42 @@ public class MainActivity extends AppCompatActivity {
 
         TextView textView = new TextView(this);
 
-        RxTextView.textChanges(textView)
-                .map(CharSequence::toString)
-                .filter(string -> string.length() > 3)
-                .flatMap(repository::getTeamsForSearch)
-                .doOnError(Log::e)
-                .subscribe(adapter::setTeams);
+        Search.Repository searchRepo = repository::getTeamsForSearch;
+        Search.QueryView queryView = () -> RxTextView.textChanges(textView);
+        Search.ResultsView resultsView = adapter::setTeams;
+        Search.displaySearchResults(searchRepo, queryView, resultsView);
+    }
 
-        RxAdapterView.itemClickEvents()
-                .map(team -> new Intent(this, TeamDetailActivity.class).putExtra("teamId", team.division))
+    interface Map<K, V> {
+        V get(K query);
+    }
+    interface Source<T> {
+        Observable<T> get();
+    }
+    interface Sink<T> {
+        void put(T t);
+    }
+
+    static final class Search {
+
+        interface Repository extends Map<String, Observable<List<Team>>> {}
+        interface QueryView extends Source<CharSequence> {}
+        interface ResultsView extends Sink<List<Team>> {}
+
+        public static Subscription displaySearchResults(Repository repository, QueryView queryView, ResultsView resultsView) {
+            return queryView.get()
+                    .map(CharSequence::toString)
+                    .filter(string -> string.length() > 3)
+                    .flatMap(repository::get)
+                    .doOnError(Log::e)
+                    .subscribe(resultsView::put);
+        }
+    }
+
+    private Subscription showTeamDetailOnClick() {
+        return RxAdapterView.itemClickEvents()
+                .map(team -> new Intent(this, MainActivity.class).putExtra("teamId", team.division))
                 .subscribe(this::startActivity);
-
-        toolbar.onBackButtonPressed(this::finish);
     }
 
     public class TeamsAdapter {
