@@ -29,5 +29,19 @@ public final class Search {
                 .subscribe(resultsView::put);
     }
 
+    /**
+     * Factory
+     * Dependency injection
+     * Lazy initialization
+     * "Singleton"
+     * Adapter
+     * Bridge
+     * Facade
+     * "Strategy"
+     * Iterator
+     * Observer
+     *
+     */
+
 
 }
