@@ -1,10 +1,13 @@
 package me.pdv.modular;
 
 import android.app.Activity;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.v4.util.Pair;
 
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import rx.Completable;
 import rx.Observable;
@@ -79,19 +82,33 @@ public class AddEditGameActivity extends Activity {
             this.user = user;
         }
 
-        private static class Maybe<T> {
-            private T t;
-            private boolean hasValue;
-            Maybe(T t, boolean hasValue) {
-                this.t = t;
-                this.hasValue = hasValue;
+        static abstract class Maybe<T> {
+
+            abstract boolean hasValue();
+            abstract T getThrowing() throws NoSuchElementException;
+            abstract T getOrNull();
+            abstract void applyMaybe(@NonNull Action1<? super T> action);
+
+            static <T> Maybe<T> Just(T t) {
+                return t == null ? new Nothing() : new Just<>(t);
             }
-            boolean hasValue() {
-                return hasValue;
+
+            static Maybe Nothing() {
+                return new Nothing();
             }
-            T value() {
-                return t;
+
+            static class Just<T> extends Maybe<T> {
+                @NonNull T x;
+                private Just(@NonNull T x) {
+                    this.x = x;
+                }
             }
+
+            static class Nothing extends Maybe {
+                private Nothing() {
+                }
+            }
+
         }
 
         private static <T, U> Observable.Transformer<T, T> filterWithLatestFrom(
@@ -99,8 +116,8 @@ public class AddEditGameActivity extends Activity {
             Func2<T, U, Boolean> predicate
         ) {
             return valueObs -> valueObs
-                    .withLatestFrom(filterObs, (value, filterValue) -> new Maybe<>(value, predicate.call(value, filterValue)))
-                    .filter(Maybe::hasValue)
+                    .withLatestFrom(filterObs, (value, filterValue) -> Pair.create(value, predicate.call(value, filterValue)))
+                    .filter(Pair::second)
                     .map(Maybe::value);
         }
 
@@ -116,13 +133,9 @@ public class AddEditGameActivity extends Activity {
                     .map(Team::getSchedule)
                     .flatMap(gameIds -> Observable.from(gameIds)
                             .flatMap(gameId -> gameRepository.get(gameId).toObservable())
+                            .compose(filterWithLatestFrom(user.rangeStart(), after))
+                            .compose(filterWithLatestFrom(user.rangeEnd(), before))
                             .toList())
-                    .toSingle()
-                    .flatMap(gameRepository::get)
-                    .
-                    .compose(filterWithLatestFrom(user.rangeStart(), after))
-                    .compose(filterWithLatestFrom(user.rangeEnd(), before))
-                    .toList()
                     .subscribe(view::showSchedule);
             subs.add(subsription);
         }
