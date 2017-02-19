@@ -12,6 +12,7 @@
     <Button
         android:id="@+id/btn_up"
         android:layout_width="96dp"
+<<<<<<< HEAD
         android:layout_height="48dp"
         android:text="up"/>
 
@@ -29,3 +30,30 @@
         android:text="0" />
 
 </LinearLayout>
+=======
+        android:layout_height="96dp"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"
+        android:text="UP"/>
+
+    <Button
+        android:id="@+id/btn_down"
+        android:layout_toEndOf="@id/btn_up"
+        android:layout_marginStart="16dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"
+        android:text="down"/>
+
+    <TextView
+        android:id="@+id/tv_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_below="@id/btn_up"
+        android:textSize="48dp"
+        android:text="" />
+
+</RelativeLayout>
+>>>>>>> 3ff1ee7b0d1c79618d4396dfd3eecd7ac9d7d0c6
