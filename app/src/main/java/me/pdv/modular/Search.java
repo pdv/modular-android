@@ -1,6 +1,7 @@
 package me.pdv.modular;
 
 import java.util.List;
+import java.util.Map;
 
 import rx.Observable;
 import rx.Subscription;
@@ -11,6 +12,15 @@ import rx.functions.Action1;
  */
 
 public final class Search {
+
+    static class Sources {
+        Observable<String> query;
+        Map<String, Observable<List<Team>>> repository;
+    }
+
+    static class Sinks {
+
+    }
 
     interface Repository extends M.Map<String, Observable<List<Team>>> {}
     interface QueryView extends M.Source<CharSequence> {}

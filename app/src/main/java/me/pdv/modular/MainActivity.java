@@ -2,10 +2,10 @@ package me.pdv.modular;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 
-import com.jakewharton.rxbinding.widget.RxTextView;
+import com.jakewharton.rxbinding.view.RxView;
 
 import java.util.List;
 
@@ -18,21 +18,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Repository repository = new Repository();
-        TeamsAdapter adapter = new TeamsAdapter();
-
-        TextView textView = new TextView(this);
-
-        Search.Repository searchRepo = repository::getTeamsForSearch;
-        Search.QueryView queryView = () -> RxTextView.textChanges(textView);
-        Search.ResultsView resultsView = adapter::setTeams;
-        Search.displaySearchResults(searchRepo, queryView, resultsView, Timber::e);
-    }
-
-    static class Timber {
-        static void e(Throwable throwable) {
-
-        }
+        TextView countView = (TextView) findViewById(R.id.tv_count);
+        Button upButton = (Button) findViewById(R.id.btn_up);
+        Button downButton = (Button) findViewById(R.id.btn_down);
+        Counter.count(RxView.clicks(upButton), RxView.clicks(downButton), countView::setText);
     }
 
     public class TeamsAdapter {
