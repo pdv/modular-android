@@ -15,4 +15,12 @@ public final class F {
         return (t1, t2) -> !func.call(t1, t2);
     }
 
+    public static <T> T first(T f, Object... rest) {
+        return f;
+    }
+
+    public static <T> T second(Object f, T s, Object... rest) {
+        return s;
+    }
+
 }

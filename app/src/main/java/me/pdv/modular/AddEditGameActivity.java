@@ -30,18 +30,6 @@ public class AddEditGameActivity extends Activity {
         void setText(String text);
     }
 
-    interface Repository<T> {
-        Observable<T> monitor(String id);
-        Single<T> get(String id);
-        Completable forceRefresh();
-        Completable save(T t);
-        Completable update(String id, Action1<T> modifyBlock);
-    }
-
-    interface Injector<T> {
-        T inject();
-    }
-
     interface Team {
         String getName();
         List<String> getSchedule();

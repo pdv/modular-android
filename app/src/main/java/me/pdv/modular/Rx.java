@@ -20,4 +20,9 @@ public final class Rx {
                 .map(Maybe::getThrowing);
     }
 
+    @NonNull
+    public static <T> Observable.Transformer<T, T> gate(@NonNull Observable<?> gateObs) {
+        return source -> source.withLatestFrom(gateObs, F::first);
+    }
+
 }
